@@ -40,13 +40,19 @@ class AppServiceProvider extends ServiceProvider
             config(['session.files' => $tmpPath . '/sessions']);
         }
 
-        // On vérifie si la table existe pour éviter les erreurs lors des migrations
-        if (Schema::hasTable('settings')) {
-            $companyName = Setting::where('key', 'company_name')->value('value') ?? 'Ma Société';
-            $companyLogo = Setting::where('key', 'company_logo')->value('value');
-            
-            View::share('companyName', $companyName);
-            View::share('companyLogo', $companyLogo);
+        // On sécurise l'accès à la base de données pour éviter le crash 500 sur Vercel
+        try {
+            if (\Illuminate\Support\Facades\DB::connection()->getPdo() && Schema::hasTable('settings')) {
+                $companyName = Setting::where('key', 'company_name')->value('value') ?? 'Ma Société';
+                $companyLogo = Setting::where('key', 'company_logo')->value('value');
+                
+                View::share('companyName', $companyName);
+                View::share('companyLogo', $companyLogo);
+            }
+        } catch (\Exception $e) {
+            // En cas d'erreur de base de données, on définit des valeurs par défaut
+            View::share('companyName', 'Gestion Facture');
+            View::share('companyLogo', null);
         }
     }
 }
