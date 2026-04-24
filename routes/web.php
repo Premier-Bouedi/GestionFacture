@@ -42,6 +42,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/restore', [AdminController::class, 'restore'])->name('restore');
 });
 
+// ROUTE MAGIQUE TEMPORAIRE (À supprimer après usage)
+Route::get('/admin/migrate-db', function() {
+    if (config('app.debug') !== true) return "Sécurité : Mode Debug requis";
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+        return "✅ Base de données Cloud initialisée avec succès ! Les tables sont créées.";
+    } catch (\Exception $e) {
+        return "❌ Erreur : " . $e->getMessage();
+    }
+});
+
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoices.download');
 
 Route::resource('invoices', InvoiceController::class);
