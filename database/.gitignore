@@ -1,1 +1,2 @@
-*.sqlite*
+# Matoor: Un-ignoring sqlite to push initial database for Vercel tests
+# *.sqlite*
