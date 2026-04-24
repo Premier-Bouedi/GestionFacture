@@ -30,14 +30,12 @@ class AppServiceProvider extends ServiceProvider
 
         // Configuration spécifique pour Vercel (Stockage en /tmp)
         if (isset($_SERVER['VERCEL_URL'])) {
-            $tmpPath = '/tmp/storage/framework';
-            if (!is_dir($tmpPath . '/views')) mkdir($tmpPath . '/views', 0777, true);
-            if (!is_dir($tmpPath . '/cache')) mkdir($tmpPath . '/cache', 0777, true);
-            if (!is_dir($tmpPath . '/sessions')) mkdir($tmpPath . '/sessions', 0777, true);
+            config(['view.compiled' => '/tmp/views']);
+            config(['cache.stores.file.path' => '/tmp/cache']);
+            config(['session.files' => '/tmp/sessions']);
             
-            config(['view.compiled' => $tmpPath . '/views']);
-            config(['cache.stores.file.path' => $tmpPath . '/cache']);
-            config(['session.files' => $tmpPath . '/sessions']);
+            // On s'assure que les dossiers existent
+            if (!is_dir('/tmp/views')) mkdir('/tmp/views', 0777, true);
         }
 
         // On sécurise l'accès à la base de données pour éviter le crash 500 sur Vercel
