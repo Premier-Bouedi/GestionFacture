@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -61,7 +62,7 @@ class UserController extends Controller
         ]);
 
         // Sécurité : Un admin ne peut pas se retirer ses propres droits par erreur
-        if (auth()->id() == $id && $request->role === 'user') {
+        if (Auth::id() == $id && $request->role === 'user') {
             return redirect()->back()->with('error', 'Vous ne pouvez pas retirer vos propres droits administrateur.');
         }
 
@@ -78,7 +79,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         // Sécurité : Un admin ne peut pas se supprimer lui-même
-        if (auth()->id() == $id) {
+        if (Auth::id() == $id) {
             return redirect()->back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
@@ -93,7 +94,7 @@ class UserController extends Controller
     public function forceReset(User $user)
     {
         // Sécurité : Un admin ne peut pas reset son propre mot de passe via cette méthode
-        if (auth()->id() == $user->id) {
+        if (Auth::id() == $user->id) {
             return redirect()->back()->with('error', 'Utilisez la méthode classique pour changer votre propre mot de passe.');
         }
 

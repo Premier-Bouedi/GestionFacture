@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Illuminate\Support\Facades\Auth;
+
 class AdminMiddleware
 {
     /**
@@ -16,7 +18,7 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Si l'utilisateur n'est pas connecté OU n'est pas admin
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
             abort(403, "Action non autorisée. Accès réservé aux administrateurs.");
         }
 
