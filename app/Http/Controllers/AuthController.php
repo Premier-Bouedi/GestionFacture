@@ -1,5 +1,4 @@
-<?php
-
+﻿<?php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -12,15 +11,15 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(Request )
     {
-        $credentials = $request->validate([
+         = ->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        if (Auth::attempt()) {
+            ->session()->regenerate();
             return redirect()->intended('/invoices');
         }
 
@@ -29,11 +28,11 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request )
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        ->session()->invalidate();
+        ->session()->regenerateToken();
         return redirect('/');
     }
 }
