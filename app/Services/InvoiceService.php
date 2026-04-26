@@ -35,18 +35,41 @@ class InvoiceService
                 'number' => $formattedNumber,
                 'client_id' => $clientId,
                 'invoice_date' => $data['invoice_date'],
+                'total_ht' => 0,
+                'total_tva' => 0,
+                'total_ttc' => 0,
             ]);
+
+            $totalHt = 0;
 
             foreach ($data['products'] as $item) {
                 $product = \App\Models\Product::findOrFail($item['id']);
                 
                 if ($product->stock < $item['quantity']) {
-                    throw new \Exception("Stock insuffisant pour le produit : {$product->name}");
+                    throw new \Exception("Stock insuffisant pour le produit : {$product->designation}");
                 }
 
                 $product->decrement('stock', $item['quantity']);
-                $invoice->products()->attach($item['id'], ['quantity' => $item['quantity']]);
+                
+                $unitPrice = $product->prix_unitaire;
+                $lineTotal = $unitPrice * $item['quantity'];
+                $totalHt += $lineTotal;
+
+                $invoice->products()->attach($item['id'], [
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $unitPrice
+                ]);
             }
+
+            // Calculer TVA (20%) et TTC
+            $totalTva = $totalHt * 0.20;
+            $totalTtc = $totalHt + $totalTva;
+
+            $invoice->update([
+                'total_ht' => $totalHt,
+                'total_tva' => $totalTva,
+                'total_ttc' => $totalTtc,
+            ]);
 
             return $invoice;
         });
@@ -69,19 +92,42 @@ class InvoiceService
             $invoice->update([
                 'client_id' => $data['client_id'],
                 'invoice_date' => $data['invoice_date'],
+                'total_ht' => 0,
+                'total_tva' => 0,
+                'total_ttc' => 0,
             ]);
+
+            $totalHt = 0;
 
             // 4. Attacher les nouveaux produits et décrémenter le stock
             foreach ($data['products'] as $item) {
                 $product = \App\Models\Product::findOrFail($item['id']);
                 
                 if ($product->stock < $item['quantity']) {
-                    throw new \Exception("Stock insuffisant pour le produit : {$product->name}");
+                    throw new \Exception("Stock insuffisant pour le produit : {$product->designation}");
                 }
 
                 $product->decrement('stock', $item['quantity']);
-                $invoice->products()->attach($item['id'], ['quantity' => $item['quantity']]);
+
+                $unitPrice = $product->prix_unitaire;
+                $lineTotal = $unitPrice * $item['quantity'];
+                $totalHt += $lineTotal;
+
+                $invoice->products()->attach($item['id'], [
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $unitPrice
+                ]);
             }
+
+            // Calculer TVA (20%) et TTC
+            $totalTva = $totalHt * 0.20;
+            $totalTtc = $totalHt + $totalTva;
+
+            $invoice->update([
+                'total_ht' => $totalHt,
+                'total_tva' => $totalTva,
+                'total_ttc' => $totalTtc,
+            ]);
 
             return $invoice;
         });
