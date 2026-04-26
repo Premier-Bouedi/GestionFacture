@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
                 View::share('companyLogo', $companyLogo);
             }
         } catch (\Exception $e) {
-            View::share('companyName', 'Gestion Facture');
+            View::share('companyName', 'FAC+');
             View::share('companyLogo', null);
         }
     }

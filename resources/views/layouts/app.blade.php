@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion de Facturation</title>
+    <title>FAC+ | Gestion de Facturation</title>
     @if($companyLogo)
         <link rel="icon" type="image/png" href="{{ asset('storage/' . $companyLogo) }}">
     @else
@@ -19,7 +19,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('invoices.index') }}">Facturation Pro</a>
+            <a class="navbar-brand fw-bold" href="{{ route('invoices.index') }}">
+                <i class="fas fa-file-invoice-dollar"></i> FAC+
+            </a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
