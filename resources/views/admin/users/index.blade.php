@@ -40,7 +40,12 @@
                         <td class="fw-bold">{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>
-                            <span class="badge {{ $user->role === 'admin' ? 'bg-danger' : 'bg-secondary' }}">
+                            @php
+                                $badgeClass = 'bg-secondary';
+                                if($user->role === 'admin') $badgeClass = 'bg-danger';
+                                if($user->role === 'manager') $badgeClass = 'bg-success';
+                            @endphp
+                            <span class="badge {{ $badgeClass }}">
                                 {{ strtoupper($user->role) }}
                             </span>
                         </td>
@@ -50,6 +55,7 @@
                                 @method('PUT')
                                 <select name="role" class="form-select form-select-sm" style="width: auto;">
                                     <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>USER</option>
+                                    <option value="manager" {{ $user->role === 'manager' ? 'selected' : '' }}>MANAGER</option>
                                     <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>ADMIN</option>
                                 </select>
                                 <button type="submit" class="btn btn-sm btn-primary">Valider</button>
