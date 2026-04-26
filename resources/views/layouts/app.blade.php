@@ -21,20 +21,25 @@
         <div class="container">
             <a class="navbar-brand" href="{{ route('invoices.index') }}">Facturation Pro</a>
             <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    @if(auth()->check() && auth()->user()->isAdmin())
-                        <li class="nav-item bg-danger rounded ms-lg-2">
-                            <a class="nav-link text-white fw-bold" href="{{ route('admin.dashboard') }}">
-                                🛡️ Espace Admis
-                            </a>
-                        </li>
-                    @endif
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-3 me-2" href="{{ route('invoices.create') }}">
+                            <i class="fas fa-plus-circle"></i> Nouvelle Facture
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('invoices.index') }}">Factures</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.products.index') }}">Produits</a>
                     </li>
+                    @if(auth()->check() && auth()->user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-danger" href="{{ route('admin.dashboard') }}">
+                                🛡️ Espace Admis
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.settings.index') }}">Paramètres</a>
                     </li>
@@ -42,13 +47,10 @@
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link">Déconnexion</button>
+                            <button type="submit" class="btn btn-link nav-link text-muted">Déconnexion</button>
                         </form>
                     </li>
                     @endauth
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white" href="{{ route('invoices.create') }}">Nouvelle Facture</a>
-                    </li>
                 </ul>
             </div>
         </div>
