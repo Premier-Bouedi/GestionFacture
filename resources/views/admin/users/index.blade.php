@@ -4,7 +4,12 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>🛡️ Gestion des Utilisateurs & Accès</h2>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">Retour au Dashboard</a>
+        <div>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                ➕ Ajouter un Membre
+            </button>
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">Retour</a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -99,6 +104,47 @@
                 <li><strong>🔑 Reset MDP</strong> : Réinitialise le mot de passe à <code>password123</code>. L'utilisateur devra le changer à sa prochaine connexion.</li>
                 <li><strong>Supprimer</strong> : Supprime définitivement le compte. <span class="text-danger">Irréversible.</span></li>
             </ul>
+        </div>
+    </div>
+
+    <!-- Modal Ajouter Utilisateur -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('admin.users.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">➕ Nouveau Membre de l'Équipe</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" name="name" class="form-control" placeholder="ex: Jean Dupont" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Professionnel</label>
+                            <input type="email" name="email" class="form-control" placeholder="jean@facplus.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mot de Passe Provisoire</label>
+                            <input type="password" name="password" class="form-control" placeholder="Minimum 8 caractères" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rôle</label>
+                            <select name="role" class="form-select" required>
+                                <option value="user">Utilisateur simple</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-success">Créer le compte</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

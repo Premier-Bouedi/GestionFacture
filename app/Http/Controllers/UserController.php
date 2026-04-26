@@ -31,7 +31,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:admin,manager,user',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+
+        return redirect()->back()->with('success', "Nouveau membre ajouté avec succès !");
     }
 
     /**
@@ -58,11 +72,11 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         
         $request->validate([
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,manager,user',
         ]);
 
         // Sécurité : Un admin ne peut pas se retirer ses propres droits par erreur
-        if (Auth::id() == $id && $request->role === 'user') {
+        if (Auth::id() == $id && $request->role !== 'admin') {
             return redirect()->back()->with('error', 'Vous ne pouvez pas retirer vos propres droits administrateur.');
         }
 
