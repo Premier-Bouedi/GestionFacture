@@ -43,6 +43,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/restore', [AdminController::class, 'restore'])->name('restore');
 });
 
+// ROUTE DE SECOURS (Test Ultime Harick & Matoor)
+Route::get('/fix-login', function() {
+    try {
+        $user = \App\Models\User::updateOrCreate(
+            ['email' => 'magnagamakelighiclainn@gmail.com'],
+            [
+                'name' => 'Claïnn Admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'role' => 'admin'
+            ]
+        );
+        return "✅ Succès ! Le compte " . $user->email . " est prêt. Mot de passe : password";
+    } catch (\Exception $e) {
+        return "❌ Erreur : " . $e->getMessage();
+    }
+});
+
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoices.download');
 
 Route::resource('invoices', InvoiceController::class);
