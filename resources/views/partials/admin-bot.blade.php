@@ -128,8 +128,8 @@
     .admin-bot-status { font-size: 11px; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
     .status-dot { width: 7px; height: 7px; background: #00e676; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    .admin-bot-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
-    .admin-bot-close:hover { opacity: 1; }
+    .admin-bot-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; opacity: 0.7; transition: all 0.2s; outline: none; }
+    .admin-bot-close:hover { opacity: 1; color: #ff5252; transform: rotate(90deg); }
 
     /* Messages */
     .admin-bot-messages { flex: 1; overflow-y: auto; padding: 18px; max-height: 360px; display: flex; flex-direction: column; gap: 12px; }

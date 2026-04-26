@@ -14,6 +14,17 @@
     <style>
         body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
         .navbar { margin-bottom: 30px; }
+        
+        /* Style moderne pour tous les boutons de fermeture */
+        .btn-close {
+            transition: all 0.2s ease-in-out;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-close:hover {
+            transform: rotate(90deg);
+            filter: brightness(0.5);
+        }
     </style>
 </head>
 <body>
