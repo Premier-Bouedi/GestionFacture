@@ -29,7 +29,7 @@ class ProductController extends Controller
         ]);
 
         Product::create($validated);
-        return redirect()->back()->with('success', 'Produit ajouté avec succès !');
+        return redirect()->route('admin.products.index')->with('success', 'Produit ajouté avec succès !');
     }
 
     /**
