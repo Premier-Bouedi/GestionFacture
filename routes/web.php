@@ -24,7 +24,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Chatbot (accessible aux utilisateurs connectés)
 Route::post('/chatbot', [ChatbotController::class, 'handle'])->name('chatbot.handle')->middleware('auth');
 
-// Groupe Admin (Matoor Standard)
+// Groupe Admin
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
@@ -41,23 +41,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Corbeille (Soft Deletes)
     Route::get('/trash', [AdminController::class, 'trash'])->name('trash');
     Route::post('/restore', [AdminController::class, 'restore'])->name('restore');
-});
-
-// ROUTE DE SECOURS (Test Ultime Harick & Matoor)
-Route::get('/fix-login', function() {
-    try {
-        $user = \App\Models\User::updateOrCreate(
-            ['email' => 'magnagamakelighiclainn@gmail.com'],
-            [
-                'name' => 'Claïnn Admin',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
-                'role' => 'admin'
-            ]
-        );
-        return "✅ Succès ! Le compte " . $user->email . " est prêt. Mot de passe : password";
-    } catch (\Exception $e) {
-        return "❌ Erreur : " . $e->getMessage();
-    }
 });
 
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoices.download');

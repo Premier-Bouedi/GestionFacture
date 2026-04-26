@@ -48,7 +48,6 @@ class User extends Authenticatable implements CanResetPassword
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
     }
 }
