@@ -15,57 +15,30 @@ class InvoiceSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Créer quelques produits si la table est vide
+        // 1. Créer des produits avec le nouveau schéma
         if (Product::count() === 0) {
-            $products = [
-                ['name' => 'Ordinateur Portable', 'price' => 1200, 'stock' => 50],
-                ['name' => 'Souris Sans Fil', 'price' => 25, 'stock' => 200],
-                ['name' => 'Clavier Mécanique', 'price' => 80, 'stock' => 100],
-                ['name' => 'Écran 27 Pouces', 'price' => 300, 'stock' => 30],
-                ['name' => 'Casque Audio', 'price' => 150, 'stock' => 60],
-            ];
-            foreach ($products as $p) {
-                Product::create($p);
-            }
+            Product::create(['designation' => 'Ordinateur Portable', 'prix_unitaire' => 1200, 'stock' => 50]);
+            Product::create(['designation' => 'Souris Sans Fil', 'prix_unitaire' => 25, 'stock' => 200]);
+            Product::create(['designation' => 'Clavier Mécanique', 'prix_unitaire' => 80, 'stock' => 100]);
         }
 
         $allProducts = Product::all();
         $clients = Client::all();
 
-        // 2. Créer une facture pour chaque client
+        // 2. Créer des factures pour les clients
         foreach ($clients as $client) {
             $invoice = Invoice::create([
                 'client_id' => $client->id,
-                'number' => 'FACT-' . Carbon::now()->format('Ymd') . '-' . str_pad($client->id, 4, '0', STR_PAD_LEFT),
                 'invoice_date' => Carbon::now()->subDays(rand(0, 30)),
-                'total_ht' => 0,
-                'total_tva' => 0,
-                'total_ttc' => 0,
             ]);
 
-            // Ajouter 1 à 3 produits aléatoires à la facture
-            $selectedProducts = $allProducts->random(rand(1, 3));
-            $totalHT = 0;
-
+            $selectedProducts = $allProducts->random(rand(1, 2));
             foreach ($selectedProducts as $product) {
-                $qty = rand(1, 5);
-                $price = $product->price;
-                
                 $invoice->products()->attach($product->id, [
-                    'quantity' => $qty,
-                    'unit_price' => $price
+                    'quantity' => rand(1, 3),
+                    'unit_price' => $product->prix_unitaire // On enregistre le prix pivot
                 ]);
-
-                $totalHT += ($price * $qty);
             }
-
-            // Mettre à jour les totaux de la facture
-            $tva = $totalHT * 0.20; // 20% TVA
-            $invoice->update([
-                'total_ht' => $totalHT,
-                'total_tva' => $tva,
-                'total_ttc' => $totalHT + $tva,
-            ]);
         }
     }
 }
