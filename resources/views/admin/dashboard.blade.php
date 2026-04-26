@@ -3,9 +3,16 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Tableau de Bord Admin</h2>
+        <h2>Tableau de Bord Admin <span class="badge bg-success" style="font-size: 0.4em; vertical-align: middle;">LIVE</span></h2>
         <div class="text-muted">Aujourd'hui, le {{ date('d/m/Y') }}</div>
     </div>
+
+    <script>
+        // Actualise la page automatiquement toutes les 30 secondes pour garder les stats à jour
+        setTimeout(function(){
+            window.location.reload();
+        }, 30000);
+    </script>
 
     <!-- Statistiques -->
     <div class="row mb-5">
