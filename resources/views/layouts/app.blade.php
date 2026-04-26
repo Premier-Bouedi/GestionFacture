@@ -49,7 +49,9 @@
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link text-muted">Déconnexion</button>
+                            <button type="submit" class="btn btn-link nav-link text-white opacity-75">
+                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                            </button>
                         </form>
                     </li>
                     @endauth
