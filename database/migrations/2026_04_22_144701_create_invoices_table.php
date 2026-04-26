@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('number')->unique()->nullable();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->date('invoice_date');
+            $table->decimal('total_ht', 15, 2)->default(0);
+            $table->decimal('total_tva', 15, 2)->default(0);
+            $table->decimal('total_ttc', 15, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

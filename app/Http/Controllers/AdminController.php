@@ -17,11 +17,7 @@ class AdminController extends Controller
             'total_clients' => Client::count(),
             'total_products' => Product::count(),
             'out_of_stock' => Product::where('stock', 0)->count(),
-            'total_revenue' => Invoice::with('products')->get()->sum(function($invoice) {
-                return $invoice->products->sum(function($product) {
-                    return $product->price * $product->pivot->quantity;
-                });
-            }),
+            'total_revenue' => Invoice::sum('total_ttc'),
         ];
 
         $latest_invoices = Invoice::with('client')->latest()->take(5)->get();

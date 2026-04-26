@@ -46,6 +46,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class);
     Route::post('/users/{user}/force-reset', [UserController::class, 'forceReset'])->name('users.forceReset');
     
     // Boîte Noire (Audit Log)

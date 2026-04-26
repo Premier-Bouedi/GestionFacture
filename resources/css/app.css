@@ -9,3 +9,13 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Pagination minifiée */
+.pagination {
+    font-size: 0.75rem !important;
+}
+
+.pagination .page-link {
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 4px !important;
+}

@@ -41,32 +41,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php $totalHT = 0; @endphp
                     @foreach($invoice->products as $product)
                         @php
-                            $sub = $product->price * $product->pivot->quantity;
-                            $totalHT += $sub;
+                            $sub = $product->pivot->unit_price * $product->pivot->quantity;
                         @endphp
                         <tr>
-                            <td>{{ $product->name }}</td>
-                            <td class="text-end">{{ number_format($product->price, 2) }} DH</td>
+                            <td>{{ $product->designation }}</td>
+                            <td class="text-end">{{ number_format($product->pivot->unit_price, 2, ',', ' ') }} DH</td>
                             <td class="text-center">{{ $product->pivot->quantity }}</td>
-                            <td class="text-end">{{ number_format($sub, 2) }} DH</td>
+                            <td class="text-end">{{ number_format($sub, 2, ',', ' ') }} DH</td>
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr class="table-light">
                         <td colspan="3" class="text-end">Total HT</td>
-                        <td class="text-end">{{ number_format($totalHT, 2) }} DH</td>
+                        <td class="text-end">{{ number_format($invoice->total_ht, 2, ',', ' ') }} DH</td>
                     </tr>
                     <tr class="table-light">
                         <td colspan="3" class="text-end">TVA (20%)</td>
-                        <td class="text-end">{{ number_format($totalHT * 0.2, 2) }} DH</td>
+                        <td class="text-end">{{ number_format($invoice->total_tva, 2, ',', ' ') }} DH</td>
                     </tr>
                     <tr class="table-primary">
                         <td colspan="3" class="text-end"><strong>TOTAL TTC</strong></td>
-                        <td class="text-end"><strong>{{ number_format($totalHT * 1.2, 2) }} DH</strong></td>
+                        <td class="text-end"><strong>{{ number_format($invoice->total_ttc, 2, ',', ' ') }} DH</strong></td>
                     </tr>
                 </tfoot>
             </table>

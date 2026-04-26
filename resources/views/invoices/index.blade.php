@@ -20,18 +20,11 @@
             </thead>
             <tbody>
                 @foreach($invoices as $invoice)
-                    @php
-                        $totalHT = 0;
-                        foreach($invoice->products as $product) {
-                            $totalHT += $product->price * $product->pivot->quantity;
-                        }
-                        $totalTTC = $totalHT * 1.2;
-                    @endphp
                     <tr>
-                        <td>{{ $invoice->number }}</td>
+                        <td>{{ $invoice->number ?? 'N/A' }}</td>
                         <td>{{ $invoice->client->name }}</td>
-                        <td>{{ $invoice->invoice_date }}</td>
-                        <td><strong>{{ number_format($totalTTC, 2) }} DH</strong></td>
+                        <td>{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</td>
+                        <td><strong>{{ number_format($invoice->total_ttc, 2, ',', ' ') }} DH</strong></td>
                         <td>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-info text-white">Voir</a>
