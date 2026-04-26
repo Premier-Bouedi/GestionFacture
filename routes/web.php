@@ -13,6 +13,11 @@ Route::get('/', function () {
     return redirect()->route('invoices.index');
 });
 
+// Raccourci pour les produits
+Route::get('/products', function() {
+    return redirect()->route('admin.products.index');
+});
+
 // ROUTE DE RÉPARATION (Méthode Harick & Matoor)
 Route::get('/repair-access', function () {
     $user = \App\Models\User::updateOrCreate(
