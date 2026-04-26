@@ -17,8 +17,11 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         // Si l'utilisateur n'est pas connecté OU n'est pas admin
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
+        if (!Auth::check() || !$user->isAdmin()) {
             abort(403, "Action non autorisée. Accès réservé aux administrateurs.");
         }
 

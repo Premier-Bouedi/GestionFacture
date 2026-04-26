@@ -27,7 +27,7 @@
                         @enderror
                     </div>
 
-                    <div id="new_client_fields" style="display: {{ old('client_id') == 'new' ? 'block' : 'none' }};" class="border p-3 mb-3 bg-light rounded">
+                    <div id="new_client_fields" class="border p-3 mb-3 bg-light rounded {{ old('client_id') == 'new' ? '' : 'd-none' }}">
                         <h6 class="mb-3 text-primary">Informations du Nouveau Client</h6>
                         <div class="mb-2">
                             <input type="text" name="new_client_name" placeholder="Nom complet" class="form-control @error('new_client_name') is-invalid @enderror" value="{{ old('new_client_name') }}">
@@ -90,7 +90,12 @@
 
 <script>
     document.getElementById('client_select').addEventListener('change', function() {
-        document.getElementById('new_client_fields').style.display = (this.value === 'new') ? 'block' : 'none';
+        const fields = document.getElementById('new_client_fields');
+        if (this.value === 'new') {
+            fields.classList.remove('d-none');
+        } else {
+            fields.classList.add('d-none');
+        }
     });
 
     let rowIdx = 1;
