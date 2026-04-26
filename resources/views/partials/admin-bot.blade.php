@@ -74,7 +74,7 @@
     .admin-bot-btn {
         position: fixed;
         bottom: 24px;
-        right: 24px;
+        left: 24px;
         z-index: 10000;
         display: flex;
         align-items: center;
@@ -99,7 +99,7 @@
     .admin-bot-window {
         position: fixed;
         bottom: 90px;
-        right: 24px;
+        left: 24px;
         width: 400px;
         max-height: 560px;
         z-index: 10001;
