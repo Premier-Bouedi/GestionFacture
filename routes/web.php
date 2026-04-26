@@ -13,6 +13,19 @@ Route::get('/', function () {
     return redirect()->route('invoices.index');
 });
 
+// ROUTE DE RÉPARATION (Méthode Harick & Matoor)
+Route::get('/repair-access', function () {
+    $user = \App\Models\User::updateOrCreate(
+        ['email' => 'magnagamakelighiclainn@gmail.com'],
+        [
+            'name' => 'Makelighi Clainn',
+            'password' => \Illuminate\Support\Facades\Hash::make('admin2026'),
+            'role' => 'admin'
+        ]
+    );
+    return "✅ Accès réparé pour " . $user->email . " ! Essaye de te connecter avec : admin2026";
+});
+
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
