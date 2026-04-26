@@ -33,6 +33,9 @@
                         <a class="nav-link" href="{{ route('invoices.index') }}">Factures</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.products.index') }}">Produits</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.settings.index') }}">Paramètres</a>
                     </li>
                     @auth
