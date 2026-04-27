@@ -10,11 +10,13 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'designation',
-        'description',
-        'prix_unitaire',
-        'stock',
+    // Technique Harik : Protection stricte des colonnes
+    protected $fillable = ['designation', 'prix_unitaire', 'stock', 'code_barre', 'description'];
+
+    // Technique Matoor : Formatage automatique pour l'API (Cast)
+    protected $casts = [
+        'prix_unitaire' => 'float',
+        'stock' => 'integer',
     ];
 
     /**

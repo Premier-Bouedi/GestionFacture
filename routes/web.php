@@ -66,3 +66,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoices.download');
 
 Route::resource('invoices', InvoiceController::class);
+
+// ROUTES API HYBRIDE (Technique Harik-Matoor)
+use App\Http\Controllers\Api\ProductApiController;
+Route::prefix('api')->group(function () {
+    Route::get('/products', [ProductApiController::class, 'index']);
+    Route::post('/products', [ProductApiController::class, 'store']);
+});
