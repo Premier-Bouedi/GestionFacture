@@ -74,7 +74,7 @@
     .admin-bot-btn {
         position: fixed;
         bottom: 24px;
-        left: 24px;
+        right: 24px;
         z-index: 10000;
         display: flex;
         align-items: center;
@@ -91,29 +91,53 @@
         box-shadow: 0 6px 30px rgba(15, 52, 96, 0.5);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .admin-bot-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(15, 52, 96, 0.6); }
-    .admin-bot-btn i { font-size: 18px; }
-    .admin-bot-label { letter-spacing: 0.5px; }
+
+    .admin-bot-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 40px rgba(15, 52, 96, 0.6);
+    }
+
+    .admin-bot-btn i {
+        font-size: 18px;
+    }
+
+    .admin-bot-label {
+        letter-spacing: 0.5px;
+    }
 
     /* Fenêtre de Chat */
     .admin-bot-window {
         position: fixed;
         bottom: 90px;
-        left: 24px;
+        right: 24px;
         width: 400px;
         max-height: 560px;
         z-index: 10001;
         background: #fff;
         border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
         display: none;
         flex-direction: column;
         overflow: hidden;
         animation: botSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         font-family: 'Inter', sans-serif;
     }
-    .admin-bot-window.active { display: flex; }
-    @keyframes botSlideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .admin-bot-window.active {
+        display: flex;
+    }
+
+    @keyframes botSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
 
     /* Header */
     .admin-bot-header {
@@ -124,47 +148,240 @@
         justify-content: space-between;
         align-items: center;
     }
-    .admin-bot-avatar { font-size: 28px; }
-    .admin-bot-status { font-size: 11px; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
-    .status-dot { width: 7px; height: 7px; background: #00e676; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    .admin-bot-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; opacity: 0.7; transition: all 0.2s; outline: none; }
-    .admin-bot-close:hover { opacity: 1; color: #ff5252; transform: rotate(90deg); }
+
+    .admin-bot-avatar {
+        font-size: 28px;
+    }
+
+    .admin-bot-status {
+        font-size: 11px;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        background: #00e676;
+        border-radius: 50%;
+        display: inline-block;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
+    }
+
+    .admin-bot-close {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    .admin-bot-close:hover {
+        opacity: 1;
+        color: #ff5252;
+        transform: rotate(90deg);
+    }
 
     /* Messages */
-    .admin-bot-messages { flex: 1; overflow-y: auto; padding: 18px; max-height: 360px; display: flex; flex-direction: column; gap: 12px; }
-    .bot-msg { display: flex; gap: 10px; align-items: flex-start; }
-    .bot-msg-avatar { width: 34px; height: 34px; background: #f0f2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .bot-msg-content { background: #f0f2f5; padding: 12px 16px; border-radius: 0 16px 16px 16px; font-size: 13px; line-height: 1.6; color: #333; max-width: 85%; white-space: pre-line; word-wrap: break-word; }
-    .user-msg { display: flex; justify-content: flex-end; }
-    .user-msg-content { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); color: #fff; padding: 12px 16px; border-radius: 16px 0 16px 16px; font-size: 13px; line-height: 1.5; max-width: 85%; }
+    .admin-bot-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px;
+        max-height: 360px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .bot-msg {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .bot-msg-avatar {
+        width: 34px;
+        height: 34px;
+        background: #f0f2f5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .bot-msg-content {
+        background: #f0f2f5;
+        padding: 12px 16px;
+        border-radius: 0 16px 16px 16px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #333;
+        max-width: 85%;
+        white-space: pre-line;
+        word-wrap: break-word;
+    }
+
+    .user-msg {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .user-msg-content {
+        background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 16px 0 16px 16px;
+        font-size: 13px;
+        line-height: 1.5;
+        max-width: 85%;
+    }
 
     /* Quick Actions */
-    .quick-actions { padding: 4px 0; }
-    .quick-actions-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 8px; font-weight: 600; }
-    .quick-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .quick-btn {
-        display: flex; align-items: center; gap: 8px;
-        padding: 10px 12px; border: 1.5px solid #e0e0e0; border-radius: 12px;
-        background: #fff; color: #333; font-size: 12px; font-weight: 500;
-        cursor: pointer; transition: all 0.2s; text-align: left;
+    .quick-actions {
+        padding: 4px 0;
     }
-    .quick-btn:hover { border-color: #0f3460; color: #0f3460; background: #f8f9ff; transform: translateY(-1px); }
-    .quick-btn i { font-size: 14px; color: #0f3460; }
+
+    .quick-actions-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .quick-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .quick-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 12px;
+        background: #fff;
+        color: #333;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: left;
+    }
+
+    .quick-btn:hover {
+        border-color: #0f3460;
+        color: #0f3460;
+        background: #f8f9ff;
+        transform: translateY(-1px);
+    }
+
+    .quick-btn i {
+        font-size: 14px;
+        color: #0f3460;
+    }
 
     /* Typing Indicator */
-    .typing-dots { display: flex; gap: 4px; padding: 12px 16px; align-items: center; }
-    .typing-dots span { width: 8px; height: 8px; background: #ccc; border-radius: 50%; animation: dotBounce 1.4s infinite; }
-    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dotBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+        padding: 12px 16px;
+        align-items: center;
+    }
+
+    .typing-dots span {
+        width: 8px;
+        height: 8px;
+        background: #ccc;
+        border-radius: 50%;
+        animation: dotBounce 1.4s infinite;
+    }
+
+    .typing-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes dotBounce {
+
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+        }
+
+        30% {
+            transform: translateY(-8px);
+        }
+    }
 
     /* Input */
-    .admin-bot-input-area { display: flex; padding: 14px; border-top: 1px solid #eee; gap: 10px; background: #fafafa; }
-    .admin-bot-input { flex: 1; border: 1.5px solid #e0e0e0; border-radius: 24px; padding: 11px 18px; font-size: 13px; outline: none; transition: border 0.2s; font-family: 'Inter', sans-serif; }
-    .admin-bot-input:focus { border-color: #0f3460; }
-    .admin-bot-send { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform 0.2s; }
-    .admin-bot-send:hover { transform: scale(1.1); }
+    .admin-bot-input-area {
+        display: flex;
+        padding: 14px;
+        border-top: 1px solid #eee;
+        gap: 10px;
+        background: #fafafa;
+    }
+
+    .admin-bot-input {
+        flex: 1;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 24px;
+        padding: 11px 18px;
+        font-size: 13px;
+        outline: none;
+        transition: border 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .admin-bot-input:focus {
+        border-color: #0f3460;
+    }
+
+    .admin-bot-send {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        transition: transform 0.2s;
+    }
+
+    .admin-bot-send:hover {
+        transform: scale(1.1);
+    }
 </style>
 
 {{-- ===== JAVASCRIPT ===== --}}
@@ -233,7 +450,9 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({ message: question }),
+                body: JSON.stringify({
+                    message: question
+                }),
             });
             const data = await res.json();
             hideBotTyping();

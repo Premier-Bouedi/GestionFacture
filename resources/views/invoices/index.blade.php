@@ -30,6 +30,12 @@
                                 <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-info text-white">Voir</a>
                                 <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-sm btn-warning text-white">Edit</a>
                                 <a href="{{ route('invoices.download', $invoice->id) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                <form action="{{ route('invoices.sendEmail', $invoice->id) }}" method="POST" onsubmit="return confirm('📧 Envoyer à {{ $invoice->client->email }} ?');" class="m-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Envoyer par email à {{ $invoice->client->email }}">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
                                 <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" onsubmit="return confirm('Supprimer cette facture ?');" class="m-0">
                                     @csrf
                                     @method('DELETE')

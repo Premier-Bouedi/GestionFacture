@@ -14,10 +14,8 @@ Route::get('/', function () {
     return redirect()->route('invoices.index');
 });
 
-// Raccourci pour les produits
-Route::get('/products', function() {
-    return redirect()->route('admin.products.index');
-});
+// Catalogue public pour voir les articles
+Route::get('/catalogue', [ProductController::class, 'catalog'])->name('catalog.index');
 
 // ROUTE DE RÉPARATION (Méthode Harick & Matoor)
 Route::get('/repair-access', function () {
@@ -64,6 +62,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoices.download');
+Route::post('/invoices/{id}/send-email', [InvoiceController::class, 'sendEmail'])->name('invoices.sendEmail');
 
 Route::resource('invoices', InvoiceController::class);
 
@@ -73,3 +72,8 @@ Route::prefix('api')->group(function () {
     Route::get('/products', [ProductApiController::class, 'index']);
     Route::post('/products', [ProductApiController::class, 'store']);
 });
+
+// Route d'exemple pour le cours
+Route::get('/mes-cours', function () {
+    return view('cours.index');
+})->middleware(['auth', 'verified'])->name('cours.index');

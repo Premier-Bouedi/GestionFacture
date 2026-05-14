@@ -17,6 +17,15 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a public catalog of products.
+     */
+    public function catalog()
+    {
+        $products = Product::all();
+        return view('catalog.index', compact('products'));
+    }
+
+    /**
      * Store a newly created product in storage.
      */
     public function store(Request $request)
@@ -26,10 +35,18 @@ class ProductController extends Controller
             'prix_unitaire' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        Product::create($validated);
-        return redirect()->route('admin.products.index')->with('success', 'Produit ajouté avec succès !');
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $data['image'] = $path;
+        }
+
+        Product::create($data);
+        return redirect()->back()->with('success', 'Produit avec photo ajouté !');
     }
 
     /**
@@ -42,9 +59,17 @@ class ProductController extends Controller
             'prix_unitaire' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $product->update($validated);
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $data['image'] = $path;
+        }
+
+        $product->update($data);
         return redirect()->back()->with('success', 'Produit mis à jour !');
     }
 

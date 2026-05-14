@@ -44,9 +44,14 @@
                         <a class="nav-link" href="{{ route('invoices.index') }}">Factures</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.products.index') }}">Produits</a>
+                        <a class="nav-link" href="{{ route('catalog.index') }}">
+                            <i class="fas fa-store"></i> Catalogue
+                        </a>
                     </li>
                     @if(auth()->check() && auth()->user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.products.index') }}">Stock & Produits</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link fw-bold text-danger" href="{{ route('admin.dashboard') }}">
                                 🛡️ Espace Admis

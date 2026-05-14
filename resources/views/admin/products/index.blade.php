@@ -21,6 +21,7 @@
             <table class="table table-hover mb-0">
                 <thead class="table-dark">
                     <tr>
+                        <th>Image</th>
                         <th>Désignation</th>
                         <th>Description</th>
                         <th class="text-end">Prix Unitaire</th>
@@ -31,8 +32,21 @@
                 <tbody>
                     @forelse($products as $product)
                     <tr>
-                        <td><strong>{{ $product->designation }}</strong></td>
-                        <td class="text-muted small">{{ Str::limit($product->description, 50) }}</td>
+                        <td class="align-middle">
+                            @if($product->image)
+                                <div class="bg-white rounded shadow-sm d-flex justify-content-center align-items-center p-1" style="width: 55px; height: 55px;">
+                                    <img src="{{ asset('storage/' . $product->image) }}" 
+                                         alt="{{ $product->designation }}" 
+                                         style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
+                            @else
+                                <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            @endif
+                        </td>
+                        <td class="align-middle"><strong>{{ $product->designation }}</strong></td>
+                        <td class="align-middle text-muted small">{{ Str::limit($product->description, 50) }}</td>
                         <td class="text-end">{{ number_format($product->prix_unitaire, 2, ',', ' ') }} DH</td>
                         <td class="text-center">
                             @if($product->stock <= 5)
@@ -63,7 +77,7 @@
                     <div class="modal fade" id="editProductModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form action="{{ route('admin.products.update', $product->id) }}" method="POST">
+                                <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-header">
@@ -71,6 +85,10 @@
                                         <button type="button" class="btn-close" data-bs-close="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Image du Produit</label>
+                                            <input type="file" name="image" class="form-control" accept="image/*">
+                                        </div>
                                         <div class="mb-3">
                                             <label class="form-label">Désignation</label>
                                             <input type="text" name="designation" class="form-control" value="{{ $product->designation }}" required>
@@ -98,7 +116,7 @@
                     </div>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center py-4 text-muted">Aucun produit en stock.</td>
+                        <td colspan="6" class="text-center py-4 text-muted">Aucun produit en stock.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -111,13 +129,17 @@
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('admin.products.store') }}" method="POST">
+            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Nouveau Produit</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-close="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Image du Produit</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
                     <div class="mb-3">
                         <label class="form-label font-weight-bold">Désignation</label>
                         <input type="text" name="designation" class="form-control" placeholder="ex: Ordinateur HP" required>

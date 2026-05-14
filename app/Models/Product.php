@@ -11,7 +11,9 @@ class Product extends Model
     use HasFactory;
 
     // Technique Harik : Protection stricte des colonnes
-    protected $fillable = ['designation', 'prix_unitaire', 'stock', 'code_barre', 'description'];
+    protected $fillable = ['designation', 'image', 'prix_unitaire', 'stock', 'code_barre', 'description'];
+
+    protected $appends = ['image_url'];
 
     // Technique Matoor : Formatage automatique pour l'API (Cast)
     protected $casts = [
@@ -27,5 +29,10 @@ class Product extends Model
         return $this->belongsToMany(Invoice::class, 'invoice_product')
                     ->withPivot('quantity', 'unit_price')
                     ->withTimestamps();
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : asset('images/default-product.png');
     }
 }

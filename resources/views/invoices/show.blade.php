@@ -6,6 +6,12 @@
         <h2>Facture N° {{ $invoice->number }}</h2>
         <div class="d-flex">
             <a href="{{ route('invoices.download', $invoice->id) }}" class="btn btn-danger me-2">Télécharger PDF</a>
+            <form action="{{ route('invoices.sendEmail', $invoice->id) }}" method="POST" onsubmit="return confirm('📧 Envoyer cette facture par email à :\n{{ $invoice->client->email }}\n\nConfirmer l\'envoi ?');" class="me-2">
+                @csrf
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Envoyer par email
+                </button>
+            </form>
             <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" onsubmit="return confirm('Supprimer cette facture ?');" class="me-2">
                 @csrf
                 @method('DELETE')

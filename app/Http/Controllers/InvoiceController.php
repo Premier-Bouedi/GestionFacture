@@ -7,7 +7,9 @@ use App\Models\Client;
 use App\Models\Product;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Services\InvoiceService;
+use App\Mail\InvoiceMail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
 
 class InvoiceController extends Controller
 {
@@ -84,5 +86,33 @@ class InvoiceController extends Controller
 
         // Téléchargement du fichier
         return $pdf->download('facture-' . $invoice->id . '.pdf');
+    }
+
+    /**
+     * Envoyer la facture par email au client avec le PDF en pièce jointe.
+     */
+    public function sendEmail($id)
+    {
+        try {
+            $invoice = Invoice::with(['client', 'products'])->findOrFail($id);
+
+            // Vérifier que le client a un email valide
+            if (empty($invoice->client->email)) {
+                return redirect()->back()->with('error', 
+                    "Impossible d'envoyer : le client « {$invoice->client->name} » n'a pas d'adresse email."
+                );
+            }
+
+            // Envoyer l'email avec le PDF en pièce jointe
+            Mail::to($invoice->client->email)->send(new InvoiceMail($invoice));
+
+            return redirect()->back()->with('success', 
+                "✅ Facture {$invoice->number} envoyée avec succès à {$invoice->client->email} !"
+            );
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 
+                "❌ Erreur lors de l'envoi : " . $e->getMessage()
+            );
+        }
     }
 }
