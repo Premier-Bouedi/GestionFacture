@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture {{ $invoice->number }}</title>
 </head>
+
 <body style="margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f4f6f9; padding: 40px 0;">
         <tr>
             <td align="center">
                 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-                    
+
                     {{-- EN-TÊTE --}}
                     <tr>
                         <td style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 36px 40px; text-align: center;">
@@ -121,4 +123,5 @@
         </tr>
     </table>
 </body>
+
 </html>

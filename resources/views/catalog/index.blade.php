@@ -6,6 +6,8 @@
         <h2><i class="fas fa-store text-primary"></i> Catalogue des Produits</h2>
     </div>
 
+    <form method="GET"><input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Rechercher..."><button type="submit">🔍</button></form>
+
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
         @forelse($products as $product)
             <div class="col">

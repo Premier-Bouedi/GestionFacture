@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\MessageController;
 
 Route::get('/', function () {
     return redirect()->route('invoices.index');
@@ -47,6 +48,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::post('/settings/reset', [SettingsController::class, 'resetData'])->name('settings.reset');
+
+    // Paramètres de notifications (WhatsApp + Email)
+    Route::get('/settings/notifications', [SettingsController::class, 'notifications'])->name('settings.notifications.index');
+    Route::post('/settings/notifications', [SettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
     
     Route::resource('clients', ClientController::class);
     Route::resource('users', UserController::class);
@@ -62,15 +67,28 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 Route::get('/invoices/{id}/download', [InvoiceController::class, 'download'])->name('invoices.download');
+Route::get('/invoices/{id}/decharge', [InvoiceController::class, 'generateDecharge'])->name('invoices.decharge');
 Route::post('/invoices/{id}/send-email', [InvoiceController::class, 'sendEmail'])->name('invoices.sendEmail');
 
 Route::resource('invoices', InvoiceController::class);
+
+// Messagerie interne (Patron ⇔ Caissiers, accessible à tout utilisateur connecté)
+Route::middleware('auth')->group(function () {
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+});
 
 // ROUTES API HYBRIDE (Technique Harik-Matoor)
 use App\Http\Controllers\Api\ProductApiController;
 Route::prefix('api')->group(function () {
     Route::get('/products', [ProductApiController::class, 'index']);
     Route::post('/products', [ProductApiController::class, 'store']);
+
+    // API messagerie : polling non-lus et nouveaux messages
+    Route::middleware('auth')->group(function () {
+        Route::get('/messages/unread-count', [MessageController::class, 'unreadCount']);
+        Route::get('/messages/poll', [MessageController::class, 'poll']);
+    });
 });
 
 // Route d'exemple pour le cours

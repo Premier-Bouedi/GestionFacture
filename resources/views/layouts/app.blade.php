@@ -10,6 +10,7 @@
         <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1041/1041916.png">
     @endif
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
@@ -53,15 +54,23 @@
                             <a class="nav-link" href="{{ route('admin.products.index') }}">Stock & Produits</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.settings.index') }}">Paramètres</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link fw-bold text-danger" href="{{ route('admin.dashboard') }}">
                                 🛡️ Espace Admis
                             </a>
                         </li>
                     @endif
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.settings.index') }}">Paramètres</a>
-                    </li>
                     @auth
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ route('messages.index') }}">
+                            <i class="fas fa-envelope"></i> Messages
+                            <span id="nav-unread-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 0.65em;">
+                                0
+                            </span>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
@@ -107,6 +116,56 @@
                 icon.classList.add('fa-eye');
             }
         }
+
+        // --- BIP LOGISTIQUE ---
+        // Joue un bip si un message de succès est présent et que le son n'est pas coupé
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasSuccess = "{{ session()->has('success') ? '1' : '0' }}" === "1";
+            const isAuthenticated = "{{ auth()->check() ? '1' : '0' }}" === "1";
+            const isMuted = localStorage.getItem('audio_enabled') === 'false';
+            
+            if (hasSuccess && !isMuted) {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.15);
+                } catch(e) {
+                    console.log("Audio non supporté");
+                }
+            }
+
+            // Polling des messages non lus si connecté (utilisé aussi par message/index)
+            if (isAuthenticated) {
+                async function fetchUnreadCount() {
+                    try {
+                        const res = await fetch('/api/messages/unread-count', {
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        const data = await res.json();
+                        const badge = document.getElementById('nav-unread-badge');
+                        if (badge) {
+                            if (data.count > 0) {
+                                badge.textContent = data.count;
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    } catch(e) {}
+                }
+                fetchUnreadCount();
+                // Le polling toutes les 5s est géré dans index.blade.php ou on pourrait le mettre ici
+                setInterval(fetchUnreadCount, 10000); // 10s global
+            }
+        });
     </script>
 
     @include('partials.admin-bot')

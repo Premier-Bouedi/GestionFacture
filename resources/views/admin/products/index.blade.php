@@ -16,6 +16,8 @@
         </div>
     @endif
 
+    <form method="GET"><input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Rechercher..."><button type="submit">🔍</button></form>
+
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <table class="table table-hover mb-0">

@@ -24,3 +24,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+scratch/
+database/*.backup*
+database/*.local-backup

@@ -4,14 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Invoice;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
     use HasFactory;
 
     // Technique Harik : Protection stricte des colonnes
-    protected $fillable = ['designation', 'image', 'prix_unitaire', 'stock', 'code_barre', 'description'];
+    protected $fillable = [
+        'category_id',
+        'designation',
+        'image',
+        'prix_unitaire',
+        'stock',
+        'code_barre',
+        'description',
+    ];
 
     protected $appends = ['image_url'];
 
@@ -22,13 +32,29 @@ class Product extends Model
     ];
 
     /**
-     * Relation avec les factures (via la table pivot)
+     * Catégorie du produit.
      */
-    public function invoices()
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Historique des mouvements de stock.
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    /**
+     * Factures contenant ce produit (table pivot).
+     */
+    public function invoices(): BelongsToMany
     {
         return $this->belongsToMany(Invoice::class, 'invoice_product')
-                    ->withPivot('quantity', 'unit_price')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'unit_price')
+            ->withTimestamps();
     }
 
     public function getImageUrlAttribute()

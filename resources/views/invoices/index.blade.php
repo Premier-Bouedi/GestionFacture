@@ -6,6 +6,8 @@
     <a href="{{ route('invoices.create') }}" class="btn btn-success">Générer une Facture</a>
 </div>
 
+<form method="GET"><input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Rechercher..."><button type="submit">🔍</button></form>
+
 <div class="card shadow-sm">
     <div class="card-body">
         <table class="table table-hover">
@@ -30,6 +32,9 @@
                                 <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-info text-white">Voir</a>
                                 <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-sm btn-warning text-white">Edit</a>
                                 <a href="{{ route('invoices.download', $invoice->id) }}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                @if($invoice->isEligibleForDecharge())
+                                    <a href="{{ route('invoices.decharge', $invoice->id) }}" class="btn btn-sm btn-outline-secondary">Générer Décharge</a>
+                                @endif
                                 <form action="{{ route('invoices.sendEmail', $invoice->id) }}" method="POST" onsubmit="return confirm('📧 Envoyer à {{ $invoice->client->email }} ?');" class="m-0">
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-outline-primary" title="Envoyer par email à {{ $invoice->client->email }}">

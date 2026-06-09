@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Models\Invoice;
+use App\Models\StockMovement;
+use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceService
 {
@@ -38,6 +41,8 @@ class InvoiceService
                 'total_ht' => 0,
                 'total_tva' => 0,
                 'total_ttc' => 0,
+                'statut_paiement' => 'Payée',
+                'statut_livraison' => 'Non livré',
             ]);
 
             $totalHt = 0;
@@ -50,7 +55,24 @@ class InvoiceService
                 }
 
                 $product->decrement('stock', $item['quantity']);
-                
+
+                // Alerte WhatsApp si rupture de stock (< 5 unités)
+                if ($product->stock < 5) {
+                    try {
+                        app(WhatsAppService::class)->sendStockAlert($product);
+                    } catch (\Exception $e) {
+                        Log::warning('[Stock Alert] ' . $e->getMessage());
+                    }
+                }
+
+                // Traçabilité : sortie de stock liée à la vente
+                StockMovement::create([
+                    'product_id' => $product->id,
+                    'type' => StockMovement::TYPE_OUTPUT,
+                    'quantity' => $item['quantity'],
+                    'description' => "Vente Facture N°{$formattedNumber}",
+                ]);
+
                 $unitPrice = $product->prix_unitaire;
                 $lineTotal = $unitPrice * $item['quantity'];
                 $totalHt += $lineTotal;

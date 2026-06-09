@@ -1,17 +1,17 @@
 <?php
-require __DIR__.'/../vendor/autoload.php';
-$app = require_once __DIR__.'/../bootstrap/app.php';
+require 'vendor/autoload.php';
+$app = require_once 'bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+$email = 'magnagamakelighiclainn@gmail.com';
+$user = \App\Models\User::where('email', $email)->first();
 
-$user = User::where('email', 'magnagamakelighiclainn@gmail.com')->first();
 if ($user) {
-    $user->password = Hash::make('password');
+    echo "Utilisateur trouvé : " . $user->email . "\n";
+    $user->password = \Illuminate\Support\Facades\Hash::make('admin123');
     $user->save();
-    echo "Compte mis à jour avec succès.\n";
+    echo "✅ Mot de passe mis à jour vers 'admin123' pour le projet Gestion de Facture.\n";
 } else {
-    echo "Utilisateur non trouvé.\n";
+    echo "❌ Utilisateur non trouvé dans Gestion de Facture.\n";
 }

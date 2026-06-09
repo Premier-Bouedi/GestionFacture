@@ -13,14 +13,37 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-            ['name' => 'Laptop Gamer Pro', 'price' => 15000, 'stock' => 5],  // Stock limité
-            ['name' => 'Souris Optique', 'price' => 150, 'stock' => 100],    // Stock large
-            ['name' => 'Clavier HS', 'price' => 300, 'stock' => 0],         // TEST : Doit bloquer la vente
-            ['name' => 'Écran 4K', 'price' => 4500, 'stock' => 1],          // TEST : Dernière unité
+            [
+                'designation' => 'Laptop Gamer Pro',
+                'prix_unitaire' => 15000,
+                'stock' => 5,
+                'description' => 'Ordinateur portable haute performance pour le gaming.',
+            ],
+            [
+                'designation' => 'Souris Optique',
+                'prix_unitaire' => 150,
+                'stock' => 100,
+                'description' => 'Souris optique filaire, confortable et précise.',
+            ],
+            [
+                'designation' => 'Clavier HS',
+                'prix_unitaire' => 300,
+                'stock' => 0,
+                'description' => 'Clavier mécanique — rupture de stock (test blocage vente).',
+            ],
+            [
+                'designation' => 'Écran 4K',
+                'prix_unitaire' => 4500,
+                'stock' => 1,
+                'description' => 'Moniteur 27 pouces 4K, dernière unité disponible.',
+            ],
         ];
 
-        foreach ($products as $p) {
-            \App\Models\Product::create($p);
+        foreach ($products as $product) {
+            \App\Models\Product::updateOrCreate(
+                ['designation' => $product['designation']],
+                $product
+            );
         }
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Services\InvoiceService;
 use App\Mail\InvoiceMail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class InvoiceController extends Controller
@@ -20,12 +21,26 @@ class InvoiceController extends Controller
         $this->invoiceService = $invoiceService;
     }
 
-    // Index optimisé (Eager Loading)
-    public function index()
+    /**
+     * Liste paginée avec recherche par numéro de facture ou nom du client.
+     */
+    public function index(Request $request)
     {
-        // Seulement 2 requêtes SQL au lieu de N+1
-        $invoices = Invoice::with(['client', 'products'])->paginate(10);
-        return view('invoices.index', compact('invoices'));
+        $search = $request->input('search');
+
+        $invoices = Invoice::with(['client', 'products'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('number', 'like', "%{$search}%")
+                        ->orWhereHas('client', function ($clientQuery) use ($search) {
+                            $clientQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('invoices.index', compact('invoices', 'search'));
     }
 
     public function create()
@@ -78,14 +93,33 @@ class InvoiceController extends Controller
 
     public function download($id)
     {
-        // Récupération de la facture avec les relations
         $invoice = Invoice::with(['client', 'products'])->findOrFail($id);
 
-        // Chargement de la vue spécifique pour le PDF
         $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
 
-        // Téléchargement du fichier
         return $pdf->download('facture-' . $invoice->id . '.pdf');
+    }
+
+    /**
+     * Génère le bon de décharge PDF (factures payées, non encore livrées).
+     */
+    public function generateDecharge($id)
+    {
+        $invoice = Invoice::with(['client', 'products'])->findOrFail($id);
+
+        if (! $invoice->isPaid()) {
+            return redirect()->back()->with('error', 'Bon de décharge indisponible : la facture n\'est pas payée.');
+        }
+
+        if ($invoice->products->isEmpty()) {
+            return redirect()->back()->with('error', 'Bon de décharge indisponible : aucun article sur cette facture.');
+        }
+
+        $pdf = Pdf::loadView('invoices.decharge', compact('invoice'));
+
+        $invoice->update(['statut_livraison' => 'Livré']);
+
+        return $pdf->download('decharge-' . $invoice->number . '.pdf');
     }
 
     /**

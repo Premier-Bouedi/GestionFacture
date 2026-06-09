@@ -11,6 +11,8 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <form method="GET"><input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Rechercher..."><button type="submit">🔍</button></form>
+
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <table class="table table-hover mb-0">
@@ -27,9 +29,7 @@
                     <tr>
                         <td class="fw-bold">{{ $client->name }}</td>
                         <td>{{ $client->email }}</td>
-                        <td style="text-align: center;">
-                            <span class="badge bg-info text-white">{{ $client->invoices_count }}</span>
-                        </td>
+                        <td style="text-align: center;">{{ $client->invoices_count }}</td>
                         <td>
                             <div class="btn-group">
                                 <form action="{{ route('admin.clients.destroy', $client->id) }}" method="POST" onsubmit="return confirm('Supprimer ce client ? Cela ne supprimera pas ses factures (elles resteront liées).');">

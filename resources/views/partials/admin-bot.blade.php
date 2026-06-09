@@ -19,7 +19,12 @@
                 <div class="admin-bot-status"><span class="status-dot"></span> En ligne</div>
             </div>
         </div>
-        <button class="admin-bot-close" onclick="toggleAdminBot()">&times;</button>
+        <div class="d-flex align-items-center gap-2">
+            <button id="admin-bot-volume" class="admin-bot-icon-btn" onclick="toggleBotVolume()" title="Activer/Désactiver le son">
+                <i class="bi bi-volume-up-fill" id="bot-volume-icon"></i>
+            </button>
+            <button class="admin-bot-close" onclick="toggleAdminBot()">&times;</button>
+        </div>
     </div>
 
     {{-- Zone de Messages --}}
@@ -57,10 +62,25 @@
                 </button>
             </div>
         </div>
+
+        {{-- ===== CHOIX DE LA VOIX ===== --}}
+        <div class="voice-selector text-center mt-2 mb-2">
+            <span class="quick-actions-label d-inline-block me-2">🎙️ Voix :</span>
+            <div class="btn-group btn-group-sm" role="group">
+                <input type="radio" class="btn-check" name="botVoice" id="voiceMale" autocomplete="off" onchange="setBotVoice('male')">
+                <label class="btn btn-outline-secondary" for="voiceMale" style="font-size:11px;">Homme</label>
+
+                <input type="radio" class="btn-check" name="botVoice" id="voiceFemale" autocomplete="off" onchange="setBotVoice('female')" checked>
+                <label class="btn btn-outline-secondary" for="voiceFemale" style="font-size:11px;">Femme</label>
+            </div>
+        </div>
     </div>
 
     {{-- Zone de Saisie --}}
     <div class="admin-bot-input-area">
+        <button class="admin-bot-icon-btn text-secondary" id="admin-bot-mic" onclick="toggleSpeechRecognition()" title="Parler">
+            <i class="fas fa-microphone"></i>
+        </button>
         <input type="text" id="admin-bot-input" class="admin-bot-input" placeholder="Tapez votre question..." autocomplete="off">
         <button class="admin-bot-send" onclick="sendBotMessage()">
             <i class="fas fa-paper-plane"></i>
@@ -197,6 +217,25 @@
         opacity: 1;
         color: #ff5252;
         transform: rotate(90deg);
+    }
+
+    .admin-bot-icon-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: all 0.2s;
+        outline: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .admin-bot-icon-btn:hover {
+        opacity: 1;
+        transform: scale(1.1);
     }
 
     /* Messages */
@@ -386,6 +425,152 @@
 
 {{-- ===== JAVASCRIPT ===== --}}
 <script>
+    // ===== GESTION AUDIO & RECONNAISSANCE VOCALE =====
+    
+    let botVoicePref = 'female';
+    let availableVoices = [];
+    
+    // Initialisation du volume depuis le localStorage
+    function initBotVolume() {
+        const isMuted = localStorage.getItem('audio_enabled') === 'false';
+        updateVolumeIcon(isMuted);
+        
+        // Charger les voix quand elles sont prêtes
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                availableVoices = window.speechSynthesis.getVoices();
+            };
+        }
+    }
+
+    function toggleBotVolume() {
+        const isMuted = localStorage.getItem('audio_enabled') === 'false';
+        const newMutedState = !isMuted;
+        localStorage.setItem('audio_enabled', newMutedState ? 'false' : 'true');
+        updateVolumeIcon(newMutedState);
+        
+        // Si on coupe le son, on arrête de parler
+        if (newMutedState && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    function updateVolumeIcon(isMuted) {
+        const icon = document.getElementById('bot-volume-icon');
+        if (icon) {
+            if (isMuted) {
+                icon.className = 'bi bi-volume-mute-fill text-danger';
+            } else {
+                icon.className = 'bi bi-volume-up-fill';
+            }
+        }
+    }
+
+    function setBotVoice(gender) {
+        botVoicePref = gender;
+    }
+
+    function speakText(text) {
+        // Vérifier si le son est activé
+        if (localStorage.getItem('audio_enabled') === 'false') return;
+        
+        if (!window.speechSynthesis) return;
+
+        // Nettoyer le HTML et Markdown
+        const cleanText = text
+            .replace(/<[^>]*>?/gm, '') // Enlever balises HTML
+            .replace(/[*_#`~]/g, '')    // Enlever Markdown
+            .replace(/http[^\s]+/g, 'lien internet'); // Simplifier URL
+            
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.95; // Rythme humain fluide
+        
+        // Attribuer une voix
+        if (availableVoices.length > 0) {
+            // Chercher des voix françaises
+            const frVoices = availableVoices.filter(v => v.lang.startsWith('fr'));
+            if (frVoices.length > 0) {
+                // Heuristique simple: on essaie de deviner homme/femme par le nom si possible
+                // Google Français est souvent féminin, Microsoft Hortense est féminine, Microsoft Paul est masculin
+                let selectedVoice = null;
+                
+                if (botVoicePref === 'male') {
+                    selectedVoice = frVoices.find(v => v.name.toLowerCase().includes('paul') || v.name.toLowerCase().includes('thomas')) || frVoices[0];
+                } else {
+                    selectedVoice = frVoices.find(v => v.name.toLowerCase().includes('hortense') || v.name.toLowerCase().includes('julie') || v.name.toLowerCase().includes('google')) || frVoices[0];
+                }
+                
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+            }
+        }
+        
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // --- RECONNAISSANCE VOCALE (Speech Recognition) ---
+    let recognition = null;
+    let isRecording = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRec();
+        recognition.lang = 'fr-FR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            const input = document.getElementById('admin-bot-input');
+            input.value = transcript;
+            sendBotMessage();
+        };
+
+        recognition.onend = function() {
+            isRecording = false;
+            updateMicIcon();
+        };
+        
+        recognition.onerror = function(event) {
+            console.error("Speech recognition error", event.error);
+            isRecording = false;
+            updateMicIcon();
+        };
+    }
+
+    function toggleSpeechRecognition() {
+        if (!recognition) {
+            alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
+            return;
+        }
+
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            // Si on parle, on coupe la synthèse vocale pour ne pas qu'elle s'écoute
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            
+            recognition.start();
+            isRecording = true;
+        }
+        updateMicIcon();
+    }
+
+    function updateMicIcon() {
+        const btn = document.getElementById('admin-bot-mic');
+        const icon = btn.querySelector('i');
+        if (isRecording) {
+            icon.className = 'fas fa-microphone text-danger';
+            icon.classList.add('fa-beat-fade');
+        } else {
+            icon.className = 'fas fa-microphone';
+            icon.classList.remove('fa-beat-fade');
+        }
+    }
+
+
     function toggleAdminBot() {
         const win = document.getElementById('admin-bot-window');
         const btn = document.getElementById('admin-bot-toggle');
@@ -409,6 +594,9 @@
         `;
         container.appendChild(wrapper);
         container.scrollTop = container.scrollHeight;
+        
+        // Lancer la lecture vocale
+        speakText(text);
     }
 
     function addUserMsg(text) {
@@ -441,6 +629,9 @@
     async function askBot(question) {
         addUserMsg(question);
         showBotTyping();
+        
+        // Arrêter la parole courante si on pose une nouvelle question
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
 
         try {
             const res = await fetch('{{ route("chatbot.handle") }}', {
@@ -474,6 +665,9 @@
     document.getElementById('admin-bot-input')?.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') sendBotMessage();
     });
+    
+    // Initialiser au chargement
+    document.addEventListener('DOMContentLoaded', initBotVolume);
 </script>
 
 @endif

@@ -10,19 +10,46 @@ class ProductController extends Controller
     /**
      * Display a listing of the products.
      */
-    public function index()
+    /**
+     * Liste des produits avec recherche par désignation ou nom de catégorie.
+     */
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return view('admin.products.index', compact('products'));
+        $search = $request->input('search');
+
+        $products = Product::with('category')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('designation', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                            $categoryQuery->where('nom', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->get();
+
+        return view('admin.products.index', compact('products', 'search'));
     }
 
     /**
-     * Display a public catalog of products.
+     * Catalogue public avec recherche par désignation ou catégorie.
      */
-    public function catalog()
+    public function catalog(Request $request)
     {
-        $products = Product::all();
-        return view('catalog.index', compact('products'));
+        $search = $request->input('search');
+
+        $products = Product::with('category')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('designation', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                            $categoryQuery->where('nom', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->get();
+
+        return view('catalog.index', compact('products', 'search'));
     }
 
     /**

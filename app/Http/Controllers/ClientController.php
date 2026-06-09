@@ -10,10 +10,23 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    /**
+     * Liste des clients avec compteur de factures et recherche nom/email.
+     */
+    public function index(Request $request)
     {
-        $clients = Client::withCount('invoices')->get();
-        return view('admin.clients.index', compact('clients'));
+        $search = $request->input('search');
+
+        $clients = Client::withCount('invoices')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->get();
+
+        return view('admin.clients.index', compact('clients', 'search'));
     }
 
     /**
