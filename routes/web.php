@@ -72,10 +72,14 @@ Route::post('/invoices/{id}/send-email', [InvoiceController::class, 'sendEmail']
 
 Route::resource('invoices', InvoiceController::class);
 
-// Messagerie interne (Patron ⇔ Caissiers, accessible à tout utilisateur connecté)
+// Messagerie interne et autres routes accessibles à tout utilisateur connecté
 Route::middleware('auth')->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+    
+    // Gestion des clients (Consultation et Création accessibles par admins et caissiers)
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
 });
 
 // ROUTES API HYBRIDE (Technique Harik-Matoor)

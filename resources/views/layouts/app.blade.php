@@ -45,10 +45,26 @@
                         <a class="nav-link" href="{{ route('invoices.index') }}">Factures</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('clients.index') }}">
+                            <i class="fas fa-users"></i> Clients
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('catalog.index') }}">
                             <i class="fas fa-store"></i> Catalogue
                         </a>
                     </li>
+                    @auth
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{{ route('messages.index') }}">
+                            <i class="fas fa-envelope"></i> Messages
+                            <span id="nav-unread-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 0.65em;">
+                                0
+                            </span>
+                        </a>
+                    </li>
+                    @endauth
+
                     @if(auth()->check() && auth()->user()->isAdmin())
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.products.index') }}">Stock & Produits</a>
@@ -62,15 +78,8 @@
                             </a>
                         </li>
                     @endif
+                    
                     @auth
-                    <li class="nav-item">
-                        <a class="nav-link position-relative" href="{{ route('messages.index') }}">
-                            <i class="fas fa-envelope"></i> Messages
-                            <span id="nav-unread-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 0.65em;">
-                                0
-                            </span>
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf

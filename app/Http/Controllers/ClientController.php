@@ -16,17 +16,22 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        
+        // 1. Nombre total de clients
+        $totalClients = Client::count();
 
+        // 2. Liste des clients avec le nombre de factures
         $clients = Client::withCount('invoices')
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
                 });
             })
             ->get();
 
-        return view('admin.clients.index', compact('clients', 'search'));
+        return view('clients.index', compact('clients', 'search', 'totalClients'));
     }
 
     /**
@@ -42,7 +47,16 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'address' => 'nullable|string',
+        ]);
+
+        Client::create($validated);
+
+        return redirect()->route('clients.index')->with('success', 'Le nouveau client a été créé avec succès.');
     }
 
     /**
