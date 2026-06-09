@@ -10,12 +10,20 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Affiche la liste du personnel (caisses) avec les statistiques.
      */
     public function index()
     {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+        // Nombre total de caissiers actifs
+        $totalCaissiers = User::where('role', 'caissier')->count();
+
+        // Nombre total d'administrateurs
+        $totalAdmins = User::where('role', 'admin')->count();
+
+        // Liste de tous les utilisateurs avec le comptage de factures
+        $users = User::withCount('invoices')->get();
+
+        return view('admin.users.index', compact('users', 'totalCaissiers', 'totalAdmins'));
     }
 
     /**
@@ -35,7 +43,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,manager,user',
+            'role' => 'required|in:admin,caissier',
         ]);
 
         User::create([
@@ -72,7 +80,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         
         $request->validate([
-            'role' => 'required|in:admin,manager,user',
+            'role' => 'required|in:admin,caissier',
         ]);
 
         // Sécurité : Un admin ne peut pas se retirer ses propres droits par erreur

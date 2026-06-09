@@ -40,6 +40,14 @@ class User extends Authenticatable implements CanResetPassword, MustVerifyEmail
     }
 
     /**
+     * Factures créées par cet utilisateur (caissier).
+     */
+    public function invoices(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\Invoice::class, 'user_id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

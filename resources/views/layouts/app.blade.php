@@ -70,6 +70,11 @@
                             <a class="nav-link" href="{{ route('admin.products.index') }}">Stock & Produits</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.users.index') }}">
+                                <i class="fas fa-cash-register"></i> Caisses
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.settings.index') }}">Paramètres</a>
                         </li>
                         <li class="nav-item">
